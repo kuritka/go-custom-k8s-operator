@@ -1,0 +1,16 @@
+domain: evolutica.co.za
+layout:
+- go.kubebuilder.io/v3
+projectName: go-custom-k8s-operator
+repo: github.com/evolutica-software-solutions/go-custom-k8s-operator
+resources:
+- api:
+    crdVersion: v1
+    namespaced: true
+  controller: true
+  domain: evolutica.co.za
+  group: webapp
+  kind: EnvInject
+  path: github.com/evolutica-software-solutions/go-custom-k8s-operator/api/v1
+  version: v1
+version: "3"

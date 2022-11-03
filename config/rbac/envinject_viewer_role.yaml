@@ -1,0 +1,27 @@
+# permissions for end users to view envinjects.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: envinject-viewer-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: go-custom-k8s-operator
+    app.kubernetes.io/part-of: go-custom-k8s-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: envinject-viewer-role
+rules:
+- apiGroups:
+  - webapp.evolutica.co.za
+  resources:
+  - envinjects
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - webapp.evolutica.co.za
+  resources:
+  - envinjects/status
+  verbs:
+  - get
