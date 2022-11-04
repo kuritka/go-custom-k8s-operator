@@ -18,6 +18,10 @@ package controllers
 
 import (
 	"context"
+	"fmt"
+
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -47,11 +51,47 @@ type EnvInjectReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.13.0/pkg/reconcile
 func (r *EnvInjectReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
-
+	log := log.FromContext(ctx)
+	log.Info("Reconciling EnvInject custom resource...")
 	// TODO(user): your logic here
 
+	// Get EnvInject resource that triggered the recociliation request
+	envInjector := &webappv1.EnvInject{}
+
+	if err := r.Client.Get(ctx, req.NamespacedName, envInjector); err != nil {
+		log.Error(err, "Unable to fetch EnvInject")
+		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
+
+	deployments := &appsv1.DeploymentList{}
+	if err := r.Client.List(ctx, deployments, &client.ListOptions{Namespace: "podinfo-test"}); err != nil {
+		log.Error(err, "Unable to fetch deployments")
+		return ctrl.Result{}, client.IgnoreNotFound(err)
+	}
+
+	deploys := []appsv1.Deployment{}
+	for _, v := range deployments.Items {
+		fmt.Println(v.Name)
+		if v.Name == "frontend-podinfo" || v.Name == "backend-podinfo" {
+			fmt.Println(v.Spec.Template.Spec.Containers[0].Env)
+			deploys = append(deploys, v)
+		}
+	}
+
+	for _, v := range deploys {
+		println("Deployment to update: ", v.Name)
+		newVars := GetNewEnvs(envInjector.Spec)
+		v.Spec.Template.Spec.Containers[0].Env = append(v.Spec.Template.Spec.Containers[0].Env, newVars)
+		r.Client.Update(ctx, &v, &client.UpdateOptions{})
+	}
 	return ctrl.Result{}, nil
+}
+
+func GetNewEnvs(spec webappv1.EnvInjectSpec) corev1.EnvVar {
+	return corev1.EnvVar{
+		Name: "Name Testing",
+		Value: "Value Testing",
+	}
 }
 
 // SetupWithManager sets up the controller with the Manager.

@@ -35,10 +35,15 @@ spec:
           spec:
             description: EnvInjectSpec defines the desired state of EnvInject
             properties:
-              foo:
+              data:
+                additionalProperties:
+                  type: string
                 description: Foo is an example field of EnvInject. Edit envinject_types.go
-                  to remove/update
-                type: string
+                  to remove/update Foo string `json:"foo,omitempty"` Testing string
+                  `json:"testing"`
+                type: object
+            required:
+            - data
             type: object
           status:
             description: EnvInjectStatus defines the observed state of EnvInject

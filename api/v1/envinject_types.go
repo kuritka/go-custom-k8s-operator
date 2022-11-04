@@ -29,7 +29,9 @@ type EnvInjectSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Foo is an example field of EnvInject. Edit envinject_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// Foo string `json:"foo,omitempty"`
+	// Testing string `json:"testing"`
+	Data map[string]string `json:"data"`
 }
 
 // EnvInjectStatus defines the observed state of EnvInject

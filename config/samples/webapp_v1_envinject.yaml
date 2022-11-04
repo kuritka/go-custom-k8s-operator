@@ -9,4 +9,9 @@ metadata:
     app.kubernetes.io/created-by: go-custom-k8s-operator
   name: envinject-sample
 spec:
-  # TODO(user): Add fields here
+  data:
+    podinfo.PODINFO_UI_MESSAGE: "Awesome"
+    podinfo.PODINFO_UI_COLOR: "#FFCC33"
+    podinfo.PODINFO_SECRET: "secret!"
+    podinfo.PODINFO_SECRET: "Testing"
+    
